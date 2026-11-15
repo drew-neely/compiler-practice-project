@@ -27,7 +27,7 @@ vector<LexToken> lex(string& program) {
                 // word is finished
                 bool isInt = 1;
                 for(size_t i = 0; i < word.size(); i++) {
-                    if(!(word[0] >= '0' && word[0] <= '9')) {
+                    if(!(word[i] >= '0' && word[i] <= '9')) {
                         isInt = false;
                         break;
                     }

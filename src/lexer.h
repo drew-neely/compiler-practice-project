@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
-#include <fstream>
+#include <vector>
+#include <format>
 
 using namespace std;
 
@@ -37,6 +38,7 @@ struct LexToken {
             case LexTokenType::OpAdd:         typeStr = "OpAdd"; break;
             case LexTokenType::OpSub:         typeStr = "OpSub"; break;
             case LexTokenType::OpMul:         typeStr = "OpMul"; break;
+            case LexTokenType::OpDiv:         typeStr = "OpDiv"; break;
             case LexTokenType::OpMod:         typeStr = "OpMod"; break;
             case LexTokenType::OpLT:          typeStr = "OpLT"; break;
             case LexTokenType::OpGT:          typeStr = "OpGT"; break;
