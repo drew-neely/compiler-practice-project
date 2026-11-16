@@ -12,7 +12,7 @@ using namespace std;
 enum class ASTNodeType {
     None,
     ValInt, ValIdentifier,
-    StmtAssign, StmtIF, StmtWhile, StmtReturn,
+    StmtAssign, StmtIf, StmtWhile, StmtReturn,
     OpAdd, OpSub, OpMul, OpDiv, OpMod,
     OpLT, OpGT, OpLTEQ, OpGTEQ, OpEQ,
 };
@@ -70,6 +70,31 @@ struct ASTNode {
         throw logic_error("Attempting to free an ASTNode at an unrecognized address");
     }
 
+    bool isVal() {
+        return type == ASTNodeType::ValIdentifier ||
+               type == ASTNodeType::ValInt;
+    }
+
+    bool isStmt() {
+        return type == ASTNodeType::StmtAssign ||
+               type == ASTNodeType::StmtIf ||
+               type == ASTNodeType::StmtReturn ||
+               type == ASTNodeType::StmtWhile;
+    }
+
+    bool isOp() {
+        return type == ASTNodeType::OpAdd ||
+               type == ASTNodeType::OpSub ||
+               type == ASTNodeType::OpMul ||
+               type == ASTNodeType::OpDiv ||
+               type == ASTNodeType::OpMod ||
+               type == ASTNodeType::OpLT ||
+               type == ASTNodeType::OpGT ||
+               type == ASTNodeType::OpLTEQ ||
+               type == ASTNodeType::OpGTEQ ||
+               type == ASTNodeType::OpEQ;
+    }
+
     string toString(int depth = 0) {
         string ident(depth, '\t');
         string nodeStr;
@@ -83,7 +108,7 @@ struct ASTNode {
             case ASTNodeType::StmtAssign :
                 nodeStr = "assign";
                 break;
-            case ASTNodeType::StmtIF :
+            case ASTNodeType::StmtIf :
                 nodeStr = "if";
                 break;
             case ASTNodeType::StmtWhile :

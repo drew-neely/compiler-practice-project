@@ -64,7 +64,7 @@ ASTNode* parseStatement(vector<LexToken>& tokens, int& cursor) {
         return stmt;
     } else if(tokens[cursor].type == LexTokenType::KwIf) {
         ASTNode* stmt = ASTNode::allocNode();
-        stmt->type = ASTNodeType::StmtIF;
+        stmt->type = ASTNodeType::StmtIf;
         stmt->line = tokens[cursor].line;
         cursor++;
         if(tokens[cursor].type != LexTokenType::SmLParen) {

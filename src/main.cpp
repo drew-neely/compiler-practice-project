@@ -7,6 +7,7 @@
 
 #include "lexer.h"
 #include "parser.h"
+#include "cfg.h"
 
 using namespace std;
 
@@ -35,5 +36,9 @@ int main(int argc, char *argv[]) {
     ASTNode* ast = parse(tokens);
 
     println("{}", ast->toString());
+
+    CFG* cfg = lower(ast);
+
+    println("{}", cfg->toString());
     
 }
