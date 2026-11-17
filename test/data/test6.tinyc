@@ -1,0 +1,46 @@
+r = 0;
+flag = 1;
+if (flag == 1) {
+    i = 0;
+    while (i < 4) {
+        r = r + i;
+        i = i + 1;
+    }
+} else {
+    r = 100;
+}
+flag = 0;
+if (flag == 1) {
+    r = r + 1000;
+} else {
+    m = 0;
+    while (m < 3) {
+        r = r + 10;
+        m = m + 1;
+    }
+}
+v = 7;
+w = 1;
+if (w == 2) { v = 50; }
+k = 0;
+while (k < 3) {
+    last = k * 10;
+    k = k + 1;
+}
+t = 0;
+q = 0;
+while (q < 6) {
+    q = q + 1;
+    if (q % 2 == 0) { t = t + q; }
+}
+j = 0;
+while (j < 5) {
+    if (j == 40) {
+        if (r > 0) { return 1; } else { return 2; }
+    }
+    j = j + 1;
+}
+res = r * 1000000 + t * 10000 + v * 100 + last;
+return res;
+res = 0 - 1;
+if (res < 0) { return res; }

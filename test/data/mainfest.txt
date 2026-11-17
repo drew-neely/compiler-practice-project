@@ -1,0 +1,8 @@
+test1.tinyc 610
+test2.tinyc 128
+test3.tinyc 172010095
+test4.tinyc 10
+test5.tinyc 66
+test6.tinyc 36120720
+test7.tinyc 106
+test8.tinyc 5

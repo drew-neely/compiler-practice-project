@@ -1,0 +1,14 @@
+total = 0;
+outer = 0;
+while (outer < 10) {
+    inner = 0;
+    while (inner < 10) {
+        total = total + 1;
+        if (total == 17) {
+            if (outer > 0) { return outer * 100 + inner; } else { return 0 - 1; }
+        }
+        inner = inner + 1;
+    }
+    outer = outer + 1;
+}
+return 12345;

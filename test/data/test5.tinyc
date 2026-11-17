@@ -1,0 +1,66 @@
+x = 1 + 2 * 3 - 4 / 2 % 3;
+y = (x + 2) * (3 - (4 + 1));
+z = ((((7))));
+big = 123456789;
+zero = 0;
+under_score = x;
+v2 = under_score + 1;
+iffy = 1;
+whileLoop = 2;
+returned = 3;
+a = 1; b = 2; c = 3;
+neg1 = -5;
+neg2 = 1 - -2;
+neg3 = -5 * 3;
+neg4 = 2 * -3;
+neg5 = 10 % -3;
+neg6 = (-4 + 1);
+neg7 = b - -1;
+neg8 = -0;
+sub = b-1;
+sub2 = 5-3;
+
+if (x < y) { }
+if (x == y) { a = 1; }
+if (x < y) { a = 1; } else { a = 2; }
+if (c) { } else { b = 1; }
+if (c) { a = 1; b = 2; }
+if (c) { a = 4; } else { }
+if (c) { } else { }
+if (x < -1) { }
+if (x == 0) {
+    if (y < 2) { b = 1; } else { b = 2; }
+} else {
+    b = 3;
+}
+p = 0;
+if (p == 0) { c = p + 1; }
+
+n = 5;
+i = 0;
+total = 0;
+while (zero < zero) { }
+while (i < n) {
+    j = 0;
+    while (j < i) {
+        if (j % 2 == 0) { total = total + j * i; } else { total = total - 20; }
+        j = j + 1;
+    }
+    i = i + 1;
+}
+
+steps = 0;
+while (i < 100) {
+    if (total == 42) { return total; }
+    i = i + 1;
+    steps = steps + 1;
+}
+
+pack = a * 100 + b * 10 + c;
+negSum = neg1 + neg2 * 2 + neg3 * 3 + neg4 * 4 + neg5 * 5 + neg6 * 6 + neg7 * 7 + neg8 * 8 + sub * 9 + sub2 * 10;
+misc = z + big % 1000 + v2 * 2 + iffy * 3 + whileLoop * 4 + returned * 5 + zero;
+xy = x * 100 + y;
+mix = pack + negSum + misc + xy;
+
+if (total < 0) { return 0 - total; } else { return mix * 100000 + total * 1000 + steps; }
+return 0;
