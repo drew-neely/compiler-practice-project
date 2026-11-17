@@ -1,0 +1,140 @@
+#pragma once
+
+#include <string>
+#include <fstream>
+#include <vector>
+#include <print>
+#include <map>
+
+#include "cfg.h"
+
+int interpretCFG(CFG* cfg) {
+    vector<int> regs(cfg->symbolTable.regCount);
+    int blockPtr = 0;
+    int instrPtr = 0;
+    bool returnReached = false;
+    int returnValue;
+    
+    while(!returnReached) {
+        if(instrPtr >= (int)cfg->blocks[blockPtr].instrs.size()) {
+            // execute a terminal
+            CFGBlock& block = cfg->blocks[blockPtr];
+            CFGTerminator& term = block.terminator;
+            switch(term.type) {
+                case CFGTerminatorType::Jump : 
+                    if(block.succs.size() == 1) {
+                        blockPtr = block.succs[0];
+                        instrPtr = 0;
+                    } else {
+                        throw logic_error("Unexpected number of succesors for jump");
+                    }
+                    break;
+                case CFGTerminatorType::Branch : 
+                    if(block.succs.size() == 2) {
+                        int cond;
+                        if(term.value.type == CFGOperandType::Reg) {
+                            cond = regs[term.value.value];
+                        } else if(term.value.type == CFGOperandType::Imm) {
+                            cond = term.value.value;
+                        } else {
+                            throw logic_error("Unexpected terminator value type for branch");
+                        }
+                        blockPtr = cond ? block.succs[0] : block.succs[1];
+                        instrPtr = 0;
+                    } else {
+                        throw logic_error("Unexpected number of succesors for branch");
+                    }
+                    break;
+                case CFGTerminatorType::Return : 
+                    if(block.succs.size() == 0) {
+                        if(term.value.type == CFGOperandType::Reg) {
+                            returnValue = regs[term.value.value];
+                        } else if(term.value.type == CFGOperandType::Imm) {
+                            returnValue = term.value.value;
+                        } else {
+                            throw logic_error("Unexpected terminator value type for branch");
+                        }
+                        returnReached = true;
+                    }
+                    else {
+                        throw logic_error("Unexpected number of succesors for return");
+                    }
+                    break;
+                default: 
+                    throw logic_error("Unexpected terminator type");
+            }
+        } else { 
+            // execute an instr
+            CFGInstr instr = cfg->blocks[blockPtr].instrs[instrPtr];
+            bool hasLhs;
+            int lhs;
+            bool hasRhs;
+            int rhs;
+            if(instr.lhs.type == CFGOperandType::Reg) {
+                lhs = regs[instr.lhs.value];
+                hasLhs = true;
+            } else if(instr.lhs.type == CFGOperandType::Imm) {
+                lhs = instr.lhs.value;
+                hasLhs = true;
+            } else {
+                hasLhs = false;
+            }
+            if(instr.rhs.type == CFGOperandType::Reg) {
+                rhs = regs[instr.rhs.value];
+                hasRhs = true;
+            } else if(instr.rhs.type == CFGOperandType::Imm) {
+                rhs = instr.rhs.value;
+                hasRhs = true;
+            } else {
+                hasRhs = false;
+            }
+            if(instr.type == CFGInstrType::None) {
+                throw logic_error("Found instruction with type NONE");
+            }
+
+            int expectedNumOperands;
+            switch(instr.type) {
+                case CFGInstrType::Copy : expectedNumOperands = 1; break;
+                case CFGInstrType::Add  : 
+                case CFGInstrType::Sub  : 
+                case CFGInstrType::Mul  : 
+                case CFGInstrType::Div  : 
+                case CFGInstrType::Mod  : 
+                case CFGInstrType::LT   : 
+                case CFGInstrType::GT   : 
+                case CFGInstrType::LTEQ : 
+                case CFGInstrType::GTEQ : 
+                case CFGInstrType::EQ   : expectedNumOperands = 2; break;
+                default                 : expectedNumOperands = 0; break;
+            }
+            if(expectedNumOperands != 1 && expectedNumOperands != 2) {
+                throw logic_error("No instruction matches expected number of operands");
+            } else if(expectedNumOperands == 1 && (!hasLhs || hasRhs)) {
+                throw logic_error("Number of operands unexpected for instruction");
+            } else if(expectedNumOperands == 2 && (!hasLhs || !hasRhs)) {
+                throw logic_error("Number of operands unexpected for instruction");
+            }
+
+            int res;
+            switch(instr.type) {
+                case CFGInstrType::Copy : res = lhs       ; break;
+                case CFGInstrType::Add  : res = lhs + rhs ; break;
+                case CFGInstrType::Sub  : res = lhs - rhs ; break;
+                case CFGInstrType::Mul  : res = lhs * rhs ; break;
+                case CFGInstrType::Div  : res = lhs / rhs ; break;
+                case CFGInstrType::Mod  : res = lhs % rhs ; break;
+                case CFGInstrType::LT   : res = lhs < rhs ; break;
+                case CFGInstrType::GT   : res = lhs > rhs ; break;
+                case CFGInstrType::LTEQ : res = lhs <= rhs; break;
+                case CFGInstrType::GTEQ : res = lhs >= rhs; break;
+                case CFGInstrType::EQ   : res = lhs == rhs; break;
+                default: throw logic_error("Unexpected instr type");
+            }
+
+            regs[instr.dest] = res;
+            instrPtr++;
+        }
+    }
+
+    return returnValue;
+}
