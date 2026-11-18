@@ -8,7 +8,7 @@ using namespace std;
 
 enum class LexTokenType {
     ValInteger, ValIdentifier,
-    KwIf, KwElse, KwWhile, kwReturn,
+    KwInput, KwIf, KwElse, KwWhile, kwReturn,
     OpAssign, OpAdd, OpSub, OpMul, OpDiv, OpMod,
     OpLT, OpGT, OpLTEQ, OpGTEQ, OpEQ,
     SmLParen, SmRParen, SmLBrace, SmRBrace, SmSemi,
@@ -30,6 +30,7 @@ struct LexToken {
         switch (type) {
             case LexTokenType::ValInteger:    typeStr = "ValInteger"; break;
             case LexTokenType::ValIdentifier: typeStr = "ValIdentifier"; break;
+            case LexTokenType::KwInput:       typeStr = "KwInput"; break;
             case LexTokenType::KwIf:          typeStr = "KwIf"; break;
             case LexTokenType::KwElse:        typeStr = "KwElse"; break;
             case LexTokenType::KwWhile:       typeStr = "KwWhile"; break;

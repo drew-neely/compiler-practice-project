@@ -8,13 +8,26 @@
 
 #include "cfg.h"
 
-int interpretCFG(CFG* cfg) {
+int interpretCFG(CFG* cfg, vector<int>& parameters) {
+
+    // Init registers
+    if(cfg->symbolTable.parameters.size() != parameters.size()) {
+        throw invalid_argument("Unexpected number of parameters passed");
+    } else if(cfg->symbolTable.parameters.size() > cfg->symbolTable.regCount) {
+        throw invalid_argument("CFG has more parameters than symbols allocated");
+    }
     vector<int> regs(cfg->symbolTable.regCount);
+    for(size_t i = 0; i < parameters.size(); i++) {
+        regs[i] = parameters[i];
+    }
+
+    // pointer to current instr
     int blockPtr = 0;
     int instrPtr = 0;
     bool returnReached = false;
     int returnValue;
     
+    // iterate cfg
     while(!returnReached) {
         if(instrPtr >= (int)cfg->blocks[blockPtr].instrs.size()) {
             // execute a terminal

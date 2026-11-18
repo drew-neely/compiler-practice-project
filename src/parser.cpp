@@ -7,6 +7,7 @@
 
 ASTNode* parseBlock(vector<LexToken>& tokens, int& cursor);
 ASTNode* parseStatement(vector<LexToken>& tokens, int& cursor);
+ASTNode* parseInputList(vector<LexToken>& tokens, int& cursor);
 ASTNode* parseExpression(vector<LexToken>& tokens, int& cursor);
 ASTNode* parseSum(vector<LexToken>& tokens, int& cursor);
 ASTNode* parseTerm(vector<LexToken>& tokens, int& cursor);
@@ -61,6 +62,13 @@ ASTNode* parseStatement(vector<LexToken>& tokens, int& cursor) {
             throw invalid_argument("Expected semi at end of assignment: " + tokens[cursor].toString());
         }
         cursor++;
+        return stmt;
+    } else if(tokens[cursor].type == LexTokenType::KwInput) {
+        ASTNode* stmt = ASTNode::allocNode();
+        stmt->type = ASTNodeType::StmtInput;
+        stmt->line = tokens[cursor].line;
+        cursor++;
+        stmt->lhs = parseInputList(tokens, cursor);
         return stmt;
     } else if(tokens[cursor].type == LexTokenType::KwIf) {
         ASTNode* stmt = ASTNode::allocNode();
@@ -135,6 +143,23 @@ ASTNode* parseStatement(vector<LexToken>& tokens, int& cursor) {
         return stmt;
     } else {
         throw invalid_argument("Unexpected start of statement: " + tokens[cursor].toString());
+    }
+}
+
+ASTNode* parseInputList(vector<LexToken>& tokens, int& cursor) {
+    if(tokens[cursor].type == LexTokenType::SmSemi) {
+        cursor++;
+        return nullptr;
+    } else if(tokens[cursor].type == LexTokenType::ValIdentifier) {
+        ASTNode* param = ASTNode::allocNode();
+        param->type = ASTNodeType::ValIdentifier;
+        param->line = tokens[cursor].line;
+        param->strVal = tokens[cursor].strVal;
+        cursor++;
+        param->next = parseInputList(tokens, cursor);
+        return param;
+    } else {
+        throw invalid_argument("Unexpected token in input list" + tokens[cursor].toString());
     }
 }
 

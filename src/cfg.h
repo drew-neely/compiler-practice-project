@@ -125,29 +125,41 @@ struct CFGBlock {
 };
 
 struct CFGSymbolTable {
-    int regCount = 0;
-    map<string, int> symbols = {}; // maps to register value
+    unsigned int regCount = 0;
+    vector<string> parameters;
+    map<string, int> symbols = {};
 
     int getReg() {
         return regCount++;
     }
 
-    int getReg(string symbol) {
-        if (symbols.find(symbol) != symbols.end()) {
-            return symbols[symbol];
+    int getReg(string name) {
+        if (symbols.find(name) != symbols.end()) {
+            return symbols[name];
         } else {
             return -1;
         }
     }
 
-    void updateSymbol(string symbol, int reg) {
+    int newSymbol(string symbol) {
         if (symbols.find(symbol) != symbols.end()) {
-            throw logic_error("Attempting to update already existing symbol");
+            throw logic_error("Attempting to add already existing symbol");
         } else {
+            int reg = regCount++;
             symbols[symbol] = reg;
+            return reg;
         }
     }
-
+    
+    int newParam(string param) {
+        if(parameters.size() != regCount) {
+            throw logic_error("Attempting to add paramter after a non-parameter has been added");
+        }
+        int reg = newSymbol(param);
+        parameters.push_back(param);
+        symbols[param] = reg;
+        return reg;
+    }
 };
 
 struct CFG {

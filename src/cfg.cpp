@@ -6,17 +6,35 @@
 #include "cfg.h"
 #include "parser.h"
 
+ASTNode* iterParams(CFG* cfg, ASTNode* ast);
 ASTNode* step(CFG* cfg, int& blockId, ASTNode* ast);
 CFGOperand lowerExpr(CFG* cfg, int& blockId, ASTNode* ast);
 
 CFG* lower(ASTNode* ast) {
     CFG* cfg = new CFG();
+    ast = iterParams(cfg, ast);
     cfg->blocks.emplace_back(0);
     int blockId = 0;
     while(ast) {
         ast = step(cfg, blockId, ast);
     }
     return cfg;
+}
+
+ASTNode* iterParams(CFG* cfg, ASTNode* ast) {
+    if(ast && ast->type == ASTNodeType::StmtInput) {
+        ASTNode* listPtr = ast->lhs;
+        while(listPtr) {
+            if(listPtr->type == ASTNodeType::ValIdentifier) {
+                cfg->symbolTable.newParam(listPtr->strVal);
+            } else {
+                throw invalid_argument("Unexpected node in input parameter list");
+            }
+            listPtr = listPtr->next;
+        }
+        return ast->next;
+    }
+    return ast;
 }
 
 ASTNode* step(CFG* cfg, int& blockId, ASTNode* ast) {
@@ -34,8 +52,7 @@ ASTNode* step(CFG* cfg, int& blockId, ASTNode* ast) {
         if(rhs.type == CFGOperandType::Reg || rhs.type == CFGOperandType::Imm) {
             int reg = cfg->symbolTable.getReg(ast->lhs->strVal);
             if(reg < 0) { // symbol is not defined
-                reg = cfg->symbolTable.getReg();
-                cfg->symbolTable.updateSymbol(ast->lhs->strVal, reg);
+                reg = cfg->symbolTable.newSymbol(ast->lhs->strVal);
             }
             cfg->blocks[blockId].addInstr(CFGInstr(CFGInstrType::Copy, reg, rhs, ast->line));
         } else {
@@ -141,6 +158,8 @@ ASTNode* step(CFG* cfg, int& blockId, ASTNode* ast) {
         CFGOperand retVal = lowerExpr(cfg, blockId, ast->lhs);
         cfg->blocks[blockId].terminator = CFGTerminator(CFGTerminatorType::Return, retVal);
         return nullptr; // TODO - don't skip dead code after a return
+    } if(ast->type == ASTNodeType::StmtInput) {
+        throw invalid_argument("StmtInput must be the first statement in a program");
     } else {
         throw logic_error("Unexpected ASTNode type passed to step");
     }

@@ -17,19 +17,22 @@ namespace fs = std::filesystem;
 struct ManifestEntry {
     std::string path;
     int expected;
+    std::vector<int> inputs;
     int line;
 };
 
 bool flagRun = false;
 bool flagRunList = false;
 string runPath = "";
+bool flagParams = false;
+vector<int> runParams = {};
 bool flagExpect = false;
 int expectedReturn = 0;
 bool dumpLexerOutput = false;
 bool dumpASTOutput = false;
 bool dumpCFGOutput = false;
 
-std::vector<ManifestEntry> readManifest(const std::string& manifestPath) {
+inline std::vector<ManifestEntry> readManifest(const std::string& manifestPath) {
     std::ifstream file(manifestPath);
     if (!file) {
         throw std::runtime_error("Cannot open manifest: " + manifestPath);
@@ -46,22 +49,32 @@ std::vector<ManifestEntry> readManifest(const std::string& manifestPath) {
         if (!(words >> pathStr) || pathStr[0] == '#') {
             continue;  // blank line or comment
         }
+        auto fail = [&]() {
+            return std::runtime_error(manifestPath + ":" + std::to_string(lineNum) +
+                                      ": expected \"<path> <expected> [input ...]\"");
+        };
         int expected;
-        std::string extra;
-        if (!(words >> expected) || (words >> extra)) {
-            throw std::runtime_error(manifestPath + ":" + std::to_string(lineNum) +
-                                     ": expected \"<path> <integer>\"");
+        if (!(words >> expected)) {
+            throw fail();
+        }
+        std::vector<int> inputs;
+        int value;
+        while (words >> value) {
+            inputs.push_back(value);
+        }
+        if (!words.eof()) {
+            throw fail();  // stopped on something that isn't an integer
         }
         fs::path p(pathStr);
         if (p.is_relative()) {
             p = manifestDir / p;
         }
-        entries.push_back({p.lexically_normal(), expected, lineNum});
+        entries.push_back({p.lexically_normal(), expected, std::move(inputs), lineNum});
     }
     return entries;
 }
 
-int runTest(string path) {
+int runTest(string path, vector<int> params) {
     ifstream file(path);
     if (!file.is_open()) {
         throw logic_error(string() + "Error: Could not open file: " + path);
@@ -91,7 +104,7 @@ int runTest(string path) {
         println("{}", cfg->toString());
     }
 
-    int res = interpretCFG(cfg);
+    int res = interpretCFG(cfg, params);
 
     return res;
 
@@ -111,7 +124,7 @@ int main(int argc, char *argv[]) {
             } else {
                 throw invalid_argument("No string found after --run in args");
             }
-        } if(arg == "--run-list") {
+        } else if(arg == "--run-list") {
             if(flagRunList) {
                 throw invalid_argument("Found mulitple --run-list in args");
             }
@@ -136,6 +149,27 @@ int main(int argc, char *argv[]) {
                 }
             } else {
                 throw invalid_argument("No number found after --expect in args");
+            }
+        } else if(arg == "--parameters") {
+            if(flagParams) {
+                throw invalid_argument("Found multiple --parameters in args");
+            }
+            flagParams = true;
+            while(i+1 < argc && string(argv[i+1]).rfind("--", 0) != 0) {
+                i++;
+                string numStr = argv[i];
+                size_t pos = 0;
+                try {
+                    runParams.push_back(stoi(numStr, &pos));
+                } catch(const exception&) {
+                    pos = 0;
+                }
+                if(pos != numStr.size()) {
+                    throw invalid_argument("Invalid number after --parameters in args: " + numStr);
+                }
+            }
+            if(runParams.empty()) {
+                throw invalid_argument("No numbers found after --parameters in args");
             }
         } else if(arg == "--dump-lex") {
             dumpLexerOutput = true;
@@ -164,7 +198,7 @@ int main(int argc, char *argv[]) {
     ///////////////////////////////
 
     if(flagRun) {
-        int res = runTest(runPath);
+        int res = runTest(runPath, runParams);
         if(flagExpect) {
             if(res == expectedReturn) {
                 println("Pass!");
@@ -183,7 +217,7 @@ int main(int argc, char *argv[]) {
         int passCount = 0;
         int failCount = 0;
         for(size_t i = 0; i < manifest.size(); i++) {
-            int res = runTest(manifest[i].path);
+            int res = runTest(manifest[i].path, manifest[i].inputs);
             int expected = manifest[i].expected;
             int testNum = manifest[i].line;
             if(res == expected) {

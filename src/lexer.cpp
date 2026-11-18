@@ -45,7 +45,9 @@ vector<LexToken> lex(string& program) {
                 } else if(word[0] >= '0' && word[0] <= '9') {
                     throw invalid_argument("Identifier cannot start with a digit");
                 } else {
-                    if(word == "if") {
+                    if(word == "input") {
+                        tokens.push_back(LexToken(LexTokenType::KwInput, line));
+                    } else if(word == "if") {
                         tokens.push_back(LexToken(LexTokenType::KwIf, line));
                     } else if(word == "else") {
                         tokens.push_back(LexToken(LexTokenType::KwElse, line));

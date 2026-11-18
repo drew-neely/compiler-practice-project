@@ -12,7 +12,7 @@ using namespace std;
 enum class ASTNodeType {
     None,
     ValInt, ValIdentifier,
-    StmtAssign, StmtIf, StmtWhile, StmtReturn,
+    StmtInput, StmtAssign, StmtIf, StmtWhile, StmtReturn,
     OpAdd, OpSub, OpMul, OpDiv, OpMod,
     OpLT, OpGT, OpLTEQ, OpGTEQ, OpEQ,
 };
@@ -76,7 +76,8 @@ struct ASTNode {
     }
 
     bool isStmt() {
-        return type == ASTNodeType::StmtAssign ||
+        return type == ASTNodeType::StmtInput ||
+               type == ASTNodeType::StmtAssign ||
                type == ASTNodeType::StmtIf ||
                type == ASTNodeType::StmtReturn ||
                type == ASTNodeType::StmtWhile;
@@ -104,6 +105,9 @@ struct ASTNode {
                 break;
             case ASTNodeType::ValIdentifier :
                 nodeStr = strVal;
+                break;
+            case ASTNodeType::StmtInput:
+                nodeStr = "input";
                 break;
             case ASTNodeType::StmtAssign :
                 nodeStr = "assign";
