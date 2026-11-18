@@ -1,4 +1,18 @@
-test1.tinyc 610
+test1.tinyc 610 15 0 1
+test1.tinyc 0 0 0 1
+test1.tinyc 1 1 0 1
+test1.tinyc 1 2 0 1
+test1.tinyc 55 10 0 1
+test1.tinyc 6765 20 0 1
+test1.tinyc 987 15 1 1
+test1.tinyc 123 10 2 1
+test1.tinyc 29 5 3 4
+test1.tinyc 9 1 7 9
+test1.tinyc 0 0 5 5
+test1.tinyc 3 6 -1 1
+test1.tinyc 0 3 100 -50
+test1.tinyc 9 -3 4 9
+test1.tinyc 1836311903 46 0 1
 test2.tinyc 128
 test3.tinyc 172010095
 test4.tinyc 10
@@ -6,3 +20,75 @@ test5.tinyc 66
 test6.tinyc 36120720
 test7.tinyc 106
 test8.tinyc 5
+test9.tinyc 6 48 18
+test9.tinyc 6 18 48
+test9.tinyc 1 17 5
+test9.tinyc 100 100 0
+test9.tinyc 7 0 7
+test9.tinyc 6 270 192
+test9.tinyc 21 1071 462
+test9.tinyc 250000 1000000 750000
+test10.tinyc 1 2
+test10.tinyc 0 1
+test10.tinyc 0 0
+test10.tinyc 0 4
+test10.tinyc 1 97
+test10.tinyc 0 91
+test10.tinyc 1 7919
+test10.tinyc 0 7921
+test10.tinyc 1 104729
+test11.tinyc 0 1
+test11.tinyc 8 6
+test11.tinyc 16 7
+test11.tinyc 111 27
+test11.tinyc 118 97
+test11.tinyc 178 871
+test12.tinyc 1024 2 10
+test12.tinyc 243 3 5
+test12.tinyc 1 7 0
+test12.tinyc 0 0 5
+test12.tinyc 125 5 3
+test12.tinyc 32768 2 15
+test12.tinyc 10000 10 4
+test12.tinyc 1 1 100
+test13.tinyc 1 12321
+test13.tinyc 0 12345
+test13.tinyc 1 7
+test13.tinyc 0 10
+test13.tinyc 1 1001
+test13.tinyc 1 0
+test13.tinyc 1 123454321
+test14.tinyc 29 2 2000
+test14.tinyc 28 2 1900
+test14.tinyc 29 2 2024
+test14.tinyc 28 2 2023
+test14.tinyc 31 1 2023
+test14.tinyc 30 4 2023
+test14.tinyc 30 11 1999
+test14.tinyc 31 12 2020
+test14.tinyc 30 9 2001
+test14.tinyc 31 7 2022
+test15.tinyc 0 0
+test15.tinyc 1 1
+test15.tinyc 1 2
+test15.tinyc 3 15
+test15.tinyc 4 16
+test15.tinyc 9 99
+test15.tinyc 100 10000
+test15.tinyc 282 80000
+test15.tinyc 300 90000
+test16.tinyc 5 5 0 10
+test16.tinyc 0 -3 0 10
+test16.tinyc 10 42 0 10
+test16.tinyc 0 0 0 10
+test16.tinyc 10 10 0 10
+test16.tinyc 7 7 7 7
+test16.tinyc -10 -20 -10 -5
+test16.tinyc -5 -1 -10 -5
+test17.tinyc 11 999 5
+test17.tinyc 11 0 5
+test17.tinyc 1 -7 0
+test18.tinyc 123 1 2 3
+test18.tinyc 904 9 0 4
+test18.tinyc 0 0 0 0
+test18.tinyc 555 5 5 5
