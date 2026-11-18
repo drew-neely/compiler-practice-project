@@ -42,6 +42,17 @@ struct CFGInstr {
         type(type), dest(dest), lhs(lhs), rhs(rhs), line(line) {}
     CFGInstr(CFGInstrType type, int dest, CFGOperand lhs, int line) :
         type(type), dest(dest), lhs(lhs), line(line) {}
+
+    vector<int> getUsedRegs() {
+        vector<int> used;
+        if(lhs.type == CFGOperandType::Reg) {
+            used.push_back(lhs.value);
+        }
+        if(rhs.type == CFGOperandType::Reg) {
+            used.push_back(rhs.value);
+        }
+        return used;
+    }
     
     string toString() {
         string opStr;
@@ -83,6 +94,16 @@ struct CFGTerminator {
     CFGTerminator() {}
     CFGTerminator(CFGTerminatorType type, CFGOperand value) : type(type), value(value) {}
     CFGTerminator(CFGTerminatorType type) : type(type) {}
+
+    vector<int> getUsedRegs() {
+        vector<int> used;
+
+        if((type == CFGTerminatorType::Branch || type == CFGTerminatorType::Return) 
+                && value.type == CFGOperandType::Reg) {
+            used.push_back(value.value);
+        }
+        return used;
+    }
 
     string toString() {
         switch(type) {

@@ -7,11 +7,15 @@
 #include "lexer.h"
 #include "parser.h"
 #include "cfg.h"
+#include "liveness.h"
 
 using namespace std;
 
 
 int main(int argc, char *argv[]) {
+    
+    srand(0x08192026);
+
     if(argc != 2) {
         println(stderr, "Error: Wrong number of arguments - expected 1 arg <filename>");
         return 1;
@@ -39,5 +43,9 @@ int main(int argc, char *argv[]) {
     CFG* cfg = lower(ast);
 
     println("{}", cfg->toString());
+
+    Liveness liveness = computeLiveness(cfg);
+
+    println("{}", liveness.toString());
     
 }

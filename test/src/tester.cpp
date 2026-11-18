@@ -28,6 +28,7 @@ bool flagParams = false;
 vector<int> runParams = {};
 bool flagExpect = false;
 int expectedReturn = 0;
+bool flagTestLiveness = false; // if true fill unused values with garbage
 bool dumpLexerOutput = false;
 bool dumpASTOutput = false;
 bool dumpCFGOutput = false;
@@ -104,7 +105,7 @@ int runTest(string path, vector<int> params) {
         println("{}", cfg->toString());
     }
 
-    int res = interpretCFG(cfg, params);
+    int res = interpretCFG(cfg, params, flagTestLiveness);
 
     return res;
 
@@ -171,6 +172,8 @@ int main(int argc, char *argv[]) {
             if(runParams.empty()) {
                 throw invalid_argument("No numbers found after --parameters in args");
             }
+        } else if(arg == "--test-liveness") {
+            flagTestLiveness = true;
         } else if(arg == "--dump-lex") {
             dumpLexerOutput = true;
         } else if(arg == "--dump-ast") {
