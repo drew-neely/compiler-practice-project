@@ -6,7 +6,7 @@
 #include "cfg.h"
 #include "liveness.h"
 
-void scrambleDeadRegs(vector<int>& regs, RegSet& liveIn) {
+void scrambleDeadRegs(vector<int>& regs, BitSet& liveIn) {
     for(size_t i = 0; i < regs.size(); i++) {
         if(!liveIn.contains(i)) {
             regs[i] = rand();

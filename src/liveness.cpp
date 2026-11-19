@@ -5,6 +5,7 @@
 #include <map>
 
 #include "liveness.h"
+#include "bitset.h"
 #include "cfg.h"
 
 Liveness computeLiveness(CFG* cfg) {
@@ -48,8 +49,8 @@ Liveness computeLiveness(CFG* cfg) {
             }
             if(blockChanged) {
                 // liveIn = use + (liveOut - def)
-                RegSet tmp1 = liveness.use[b]; // copy
-                RegSet tmp2 = liveness.liveOut[b]; // copy
+                BitSet tmp1 = liveness.use[b]; // copy
+                BitSet tmp2 = liveness.liveOut[b]; // copy
                 tmp2.remove(liveness.def[b]);
                 tmp1.add(tmp2);
                 liveness.liveIn[b] = tmp1;
