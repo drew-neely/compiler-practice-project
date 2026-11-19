@@ -9,6 +9,7 @@
 #include "cfg.h"
 #include "liveness.h"
 #include "dominance.h"
+#include "ssa.h"
 
 using namespace std;
 
@@ -33,24 +34,30 @@ int main(int argc, char *argv[]) {
 
     vector<LexToken> tokens = lex(programStr);
 
+    println("Tokens:");
     for(size_t i = 0; i < tokens.size(); i++) {
         println("{}", tokens[i].toString());
     }
 
     ASTNode* ast = parse(tokens);
 
-    println("{}", ast->toString());
+    println("AST:\n{}", ast->toString());
 
     CFG* cfg = lower(ast);
 
-    println("{}", cfg->toString());
+    println("CFG:\n{}", cfg->toString());
 
     Liveness liveness = computeLiveness(cfg);
 
-    println("{}", liveness.toString());
+    println("Liveness Analysis:\n{}", liveness.toString());
 
     Dominance dominance = computeDominance(cfg);
 
-    println("{}", dominance.toString());
+    println("Dominance Analysis:\n{}", dominance.toString());
+
+    toSSA(cfg);
     
+    println("SSA:\n{}", cfg->toString());
+
+    verifySSA(cfg);
 }

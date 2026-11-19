@@ -108,7 +108,20 @@ public:
 
     bool operator==(const BitSet&) const = default;
 
-    string toString(string prefix="") {
+    vector<int> toVector() const {
+        vector<int> res;
+        for(size_t w = 0; w < bitmap.size(); w++) {
+            uint64_t word = bitmap[w];
+            while(word != 0) {
+                int i = countr_zero(word);
+                res.push_back(w*64+i);
+                word &= ~(uint64_t{1} << i);
+            }
+        }
+        return res;
+    }
+
+    string toString(string prefix="") const {
         string res = "{";
         for(size_t i = 0; i < numEntries; i++) {
             if(contains(i)) {

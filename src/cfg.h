@@ -19,12 +19,34 @@ struct CFGOperand {
     CFGOperand() {}
     CFGOperand(CFGOperandType type, int value) : type(type), value(value) {}
 
-    string toString() {
+    string toString() const {
         switch(type) {
             case CFGOperandType::Reg  : return string("r") + to_string(value);
             case CFGOperandType::Imm  : return to_string(value);
             case CFGOperandType::None : return "NONE";
         }
+    }
+};
+
+struct CFGPhi {
+    int dest = -1;
+    map<int, CFGOperand> incoming;
+
+    CFGPhi() {}
+    CFGPhi(int dest) : dest(dest) {}
+
+    string toString() const {
+        string res = string() + "phi r" + to_string(dest) + " ";
+        bool first = true;
+        for(const auto& [predId, operand] : incoming) {
+            if(first) {
+                first = false;
+            } else {
+                res += ", ";
+            }
+            res += string() + "[B" + to_string(predId) + ", " + operand.toString() + "]";
+        }
+        return res;
     }
 };
 
@@ -54,7 +76,7 @@ struct CFGInstr {
         return used;
     }
     
-    string toString() {
+    string toString() const {
         string opStr;
         switch(type) {
             case CFGInstrType::Copy : opStr = ""    ; break;
@@ -105,7 +127,7 @@ struct CFGTerminator {
         return used;
     }
 
-    string toString() {
+    string toString() const {
         switch(type) {
             case CFGTerminatorType::Jump   : return string("Jump");
             case CFGTerminatorType::Branch : return string("If ") + value.toString();
@@ -117,6 +139,7 @@ struct CFGTerminator {
 
 struct CFGBlock {
     int id;
+    vector<CFGPhi> phis;
     vector<CFGInstr> instrs;
     CFGTerminator terminator = CFGTerminator();
     
@@ -129,8 +152,12 @@ struct CFGBlock {
         instrs.push_back(instr);
     }
 
-    string toString() {
+    string toString() const {
         string nameStr = string("B") + to_string(id);
+        string phisStr;
+        for(size_t i = 0; i < phis.size(); i++) {
+            phisStr += "\t" + phis[i].toString() + ((i < phis.size() - 1)? "\n" : "");
+        }
         string instrsStr = "";
         for(size_t i = 0; i < instrs.size(); i++) {
             instrsStr += "\t" + instrs[i].toString() + ((i < instrs.size() - 1)? "\n" : "");
@@ -141,12 +168,12 @@ struct CFGBlock {
             succsStr += string("B") + to_string(succs[i]) + ((i < succs.size() - 1)? ", " : "");
         }
         succsStr += "]";
-        return nameStr + ":\n" + instrsStr + "\n\t" + termString + "\n\t" + succsStr;
+        return nameStr + ":\n" + phisStr + "\n" + instrsStr + "\n\t" + termString + "\n\t" + succsStr;
     }
 };
 
 struct CFGSymbolTable {
-    unsigned int regCount = 0;
+    size_t regCount = 0;
     vector<string> parameters;
     map<string, int> symbols = {};
 
@@ -187,7 +214,7 @@ struct CFG {
     vector<CFGBlock> blocks; // root is always the first block in blocks
     CFGSymbolTable symbolTable = CFGSymbolTable();
 
-    string toString() {
+    string toString() const {
         string res = "";
         for(size_t i = 0; i < blocks.size(); i++) {
             res += blocks[i].toString() + "\n";
