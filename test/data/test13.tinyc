@@ -6,3 +6,5 @@ while (m > 0) {
     m = m / 10;
 }
 if (rev == n) { return 1; } else { return 0; }
+
+return 0;

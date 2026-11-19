@@ -1,0 +1,5 @@
+input a;
+if (a > 0) {
+    if (a > 5) { return 1; } else { return 2; }
+}
+return 3;

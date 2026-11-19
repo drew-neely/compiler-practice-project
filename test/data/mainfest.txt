@@ -92,3 +92,7 @@ test18.tinyc 123 1 2 3
 test18.tinyc 904 9 0 4
 test18.tinyc 0 0 0 0
 test18.tinyc 555 5 5 5
+test19.tinyc 1 7
+test19.tinyc 2 3
+test19.tinyc 3 0
+test19.tinyc 3 -4
