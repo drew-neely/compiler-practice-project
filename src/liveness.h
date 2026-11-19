@@ -30,10 +30,10 @@ struct Liveness {
         string res = "";
         for(size_t b = 0; b < numBlocks; b++) {
             res += string("B") + to_string(b) + ":\n";
-            res += string("\t") + "use     : " + use[b].toString() + "\n";
-            res += string("\t") + "def     : " + def[b].toString() + "\n";
-            res += string("\t") + "liveIn  : " + liveIn[b].toString() + "\n";
-            res += string("\t") + "liveOut : " + liveOut[b].toString() + "\n";
+            res += string("\t") + "use     : " + use[b].toString("r") + "\n";
+            res += string("\t") + "def     : " + def[b].toString("r") + "\n";
+            res += string("\t") + "liveIn  : " + liveIn[b].toString("r") + "\n";
+            res += string("\t") + "liveOut : " + liveOut[b].toString("r") + "\n";
         }
         return res;
     }

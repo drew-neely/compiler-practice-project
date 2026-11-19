@@ -8,6 +8,7 @@
 #include "parser.h"
 #include "cfg.h"
 #include "liveness.h"
+#include "dominance.h"
 
 using namespace std;
 
@@ -47,5 +48,9 @@ int main(int argc, char *argv[]) {
     Liveness liveness = computeLiveness(cfg);
 
     println("{}", liveness.toString());
+
+    Dominance dominance = computeDominance(cfg);
+
+    println("{}", dominance.toString());
     
 }
