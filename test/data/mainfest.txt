@@ -96,3 +96,8 @@ test19.tinyc 1 7
 test19.tinyc 2 3
 test19.tinyc 3 0
 test19.tinyc 3 -4
+test20.tinyc 0 5
+test20.tinyc 0 0
+test20.tinyc -3 -3
+test21.tinyc 8 7
+test21.tinyc -1 -2
