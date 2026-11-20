@@ -35,7 +35,7 @@ public:
 
     bool add(size_t i) {
         if(i >= numEntries) {
-            throw logic_error("Attempt to access BitSet out of bounds");
+            throw logic_error("Attempt to add to BitSet out of bounds");
         }
         size_t vectorIdx = i / 64;
         size_t bitmapIndex = i % 64;
@@ -60,7 +60,7 @@ public:
 
     bool remove(size_t i) {
         if(i >= numEntries) {
-            throw logic_error("Attempt to access BitSet out of bounds");
+            throw logic_error("Attempt to remove from BitSet out of bounds");
         }
         size_t vectorIdx = i / 64;
         size_t bitmapIndex = i % 64;

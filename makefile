@@ -11,6 +11,10 @@ TEST_SRCS    := $(wildcard test/src/*.cpp)
 
 all : build/$(TARGET) build/$(TESTER)
 
+compiler : build/$(TARGET)
+
+tester : build/$(TESTER)
+
 clean :
 	rm -rf build
 
@@ -30,6 +34,6 @@ build/$(TESTER) : $(LIB_SRCS) $(HEADERS) $(TEST_SRCS) $(TEST_HEADERS)
 	mkdir -p build/
 	$(CXX) $(CXXFLAGS) $(LIB_SRCS) $(TEST_SRCS) -o build/$(TESTER)
 
-.PHONY : all clean debug
+.PHONY : all clean debug compiler tester
 
 

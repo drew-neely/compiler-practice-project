@@ -8,6 +8,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "cfg.h"
+#include "ssa.h"
 #include "cfg_interpreter.h"
 
 using namespace std;
@@ -32,6 +33,7 @@ bool flagTestLiveness = false; // if true fill unused values with garbage
 bool dumpLexerOutput = false;
 bool dumpASTOutput = false;
 bool dumpCFGOutput = false;
+bool dumpSSAOutput = false;
 
 inline std::vector<ManifestEntry> readManifest(const std::string& manifestPath) {
     std::ifstream file(manifestPath);
@@ -102,6 +104,12 @@ int runTest(string path, vector<int> params) {
     CFG* cfg = lower(ast);
 
     if(dumpCFGOutput) {
+        println("{}", cfg->toString());
+    }
+
+    toSSA(cfg);
+
+    if(dumpSSAOutput) {
         println("{}", cfg->toString());
     }
 
@@ -180,10 +188,13 @@ int main(int argc, char *argv[]) {
             dumpASTOutput = true;
         } else if(arg == "--dump-cfg") {
             dumpCFGOutput = true;
+        } else if(arg == "--dump-ssa") {
+            dumpSSAOutput = true;
         } else if (arg == "--dump-all") {
             dumpLexerOutput = true;
             dumpASTOutput = true;
             dumpCFGOutput = true;
+            dumpSSAOutput = true;
         } else {
             throw invalid_argument(string() + "Unexpected arg found in args : " + arg);
         }

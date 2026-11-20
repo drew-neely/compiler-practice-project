@@ -34,6 +34,7 @@ int interpretCFG(CFG* cfg, vector<int>& parameters, bool testLiveness) {
     }
 
     // pointer to current instr
+    int prevBlockPtr = -1;
     int blockPtr = 0;
     int instrPtr = 0;
     bool returnReached = false;
@@ -44,6 +45,20 @@ int interpretCFG(CFG* cfg, vector<int>& parameters, bool testLiveness) {
         if(testLiveness && instrPtr == 0) {
             scrambleDeadRegs(regs, liveness.liveIn[blockPtr]);
         }
+        if(instrPtr == 0) {
+            for(size_t p = 0; p < cfg->blocks[blockPtr].phis.size(); p++) {
+                CFGPhi& phi = cfg->blocks[blockPtr].phis[p];
+                if(prevBlockPtr == -1 || !phi.incoming.contains(prevBlockPtr)) {
+                    throw invalid_argument("phi does not contain entry for previous block");
+                }
+                CFGOperand res = phi.incoming[prevBlockPtr];
+                switch(res.type) {
+                    case CFGOperandType::Imm  : regs[phi.dest] = res.value; break;
+                    case CFGOperandType::Reg  : regs[phi.dest] = regs[res.value]; break;
+                    case CFGOperandType::None : throw "Unexpected operand in phi assignment";
+                }
+            }
+        }
         if(instrPtr >= (int)cfg->blocks[blockPtr].instrs.size()) {
             // execute a terminal
             CFGBlock& block = cfg->blocks[blockPtr];
@@ -51,6 +66,7 @@ int interpretCFG(CFG* cfg, vector<int>& parameters, bool testLiveness) {
             switch(term.type) {
                 case CFGTerminatorType::Jump : 
                     if(block.succs.size() == 1) {
+                        prevBlockPtr = blockPtr;
                         blockPtr = block.succs[0];
                         instrPtr = 0;
                     } else {
@@ -67,6 +83,7 @@ int interpretCFG(CFG* cfg, vector<int>& parameters, bool testLiveness) {
                         } else {
                             throw logic_error("Unexpected terminator value type for branch");
                         }
+                        prevBlockPtr = blockPtr;
                         blockPtr = cond ? block.succs[0] : block.succs[1];
                         instrPtr = 0;
                     } else {

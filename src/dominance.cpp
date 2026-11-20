@@ -102,3 +102,16 @@ Dominance computeDominance(CFG* cfg) {
 
     return dominance;
 }
+
+DominatorTree::DominatorTree(const Dominance& dominance) {
+    children = vector<vector<int>>(dominance.numBlocks);
+    for(size_t b = 1; b < dominance.numBlocks; b++) {
+        int iDom = dominance.iDom[b];
+        if(iDom >= (int)dominance.numBlocks) {
+            throw logic_error("Invalid idom");
+        }
+        if(iDom >= 0) {
+            children[dominance.iDom[b]].push_back(b);
+        }
+    }
+}
