@@ -6,9 +6,9 @@
 #include "cfg.h"
 #include "liveness.h"
 
-void scrambleDeadRegs(vector<int>& regs, BitSet& liveIn) {
+void scrambleDeadRegs(vector<int>& regs, BitSet& liveIn, BitSet& skipRegs) {
     for(size_t i = 0; i < regs.size(); i++) {
-        if(!liveIn.contains(i)) {
+        if(!liveIn.contains(i) && !skipRegs.contains(i)) {
             regs[i] = rand();
         }
     }
@@ -42,9 +42,6 @@ int interpretCFG(CFG* cfg, vector<int>& parameters, bool testLiveness) {
     
     // iterate cfg
     while(!returnReached) {
-        if(testLiveness && instrPtr == 0) {
-            scrambleDeadRegs(regs, liveness.liveIn[blockPtr]);
-        }
         if(instrPtr == 0) {
             for(size_t p = 0; p < cfg->blocks[blockPtr].phis.size(); p++) {
                 CFGPhi& phi = cfg->blocks[blockPtr].phis[p];
@@ -58,6 +55,13 @@ int interpretCFG(CFG* cfg, vector<int>& parameters, bool testLiveness) {
                     case CFGOperandType::None : throw "Unexpected operand in phi assignment";
                 }
             }
+        }
+        if(testLiveness && instrPtr == 0) {
+            BitSet skipRegs(cfg->symbolTable.regCount);
+            for(size_t p = 0; p < cfg->blocks[blockPtr].phis.size(); p++) {
+                skipRegs.add(cfg->blocks[blockPtr].phis[p].dest);
+            }
+            scrambleDeadRegs(regs, liveness.liveIn[blockPtr], skipRegs);
         }
         if(instrPtr >= (int)cfg->blocks[blockPtr].instrs.size()) {
             // execute a terminal

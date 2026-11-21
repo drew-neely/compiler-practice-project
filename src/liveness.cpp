@@ -13,6 +13,15 @@ Liveness computeLiveness(CFG* cfg) {
     
     // Compute def and use
     for(size_t b = 0; b < cfg->blocks.size(); b++) {
+        vector<CFGPhi> phis = cfg->blocks[b].phis;
+        for(size_t i = 0; i < phis.size(); i++) {
+            for(const auto& [inBlock, op] : phis[i].incoming) {
+                if(op.type == CFGOperandType::Reg) {
+                    liveness.use[inBlock].add(op.value);
+                }
+            }
+            liveness.def[b].add(phis[i].dest);
+        }
         vector<CFGInstr>& instrs = cfg->blocks[b].instrs;
         for(size_t i = 0; i < instrs.size(); i++) {
             vector<int> usedRegs = instrs[i].getUsedRegs();
